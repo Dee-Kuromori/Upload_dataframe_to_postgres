@@ -1,14 +1,15 @@
 
 
-
+#create directory in hue web interface using jenkins login
 /user/jenkins/fraud_demo_full_load_demetric
+
 
 
 ########spoop import command to upload table from postgres to hdfs#####
 sqoop import --connect jdbc:postgresql://ec2-3-9-191-104.eu-west-2.compute.amazonaws.com:5432/testdb --username consultants --password WelcomeItc@2022 --table fraudtable --m 1 --target-dir /user/jenkins/fraud_demo_full_load_demetric
 
 
-######Create external table on top spoop imported flat file in HDFS##########
+######Create HQL script that creates external table on top of spoop imported flat file in HDFS##########
 DROP TABLE IF EXISTS fraud_project_demo.fraud_full_load_demo;
 CREATE EXTERNAL TABLE IF NOT EXISTS fraud_project_demo.fraud_full_load_demo (
    step INT,
@@ -29,3 +30,37 @@ FIELDS TERMINATED BY ','
 LINES TERMINATED BY '\n'
 STORED AS TEXTFILE
 LOCATION '/user/jenkins/fraud_demo_full_load_demetric';
+
+
+############set up workflow in oozie###########
+
+##part 0: steps done before##
+step_1: login to oozie under jenkins user
+   username:jenkins
+   Password:WelcomeItc@2022
+step_2: Go to oozie on side panel
+step_3: Create new workflow
+
+
+
+##part 1: Delete path##
+step_1: in Oozie switch from documents to actions on top panel 
+step_2: Select FS action on panel and drag it into work area where you add actions, 
+        and then select delete path
+step_3: put your path to the directory that you created for sqoop import of postgres table
+
+##Part 2: Sqoop import ##
+step_1: Select sqoop action on top panel and drag it into work area
+step_2: paste sqoop command into this sqoop action with correct directory that you
+        want postgres table uploaded to
+##Part 3: Create External Table##
+step_1: Select Hive2 server action on top panel and drag it into work area
+step_2: upload your hive script you created into a directory seperate from
+        the one you sqoop imported your postgres table into
+step_3:select your script
+
+##Part 4: run workflow##
+step_1: save workflow
+step_2: run workflow
+
+
