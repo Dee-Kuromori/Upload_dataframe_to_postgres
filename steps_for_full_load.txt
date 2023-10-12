@@ -36,8 +36,8 @@ LOCATION '/user/jenkins/fraud_demo_full_load_demetric';
 
 ##part 0: steps done before##
 step_1: login to oozie under jenkins user
-   username:jenkins
-   Password:WelcomeItc@2022
+   username:********
+   Password:***********
 step_2: Go to oozie on side panel
 step_3: Create new workflow
 
