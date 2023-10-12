@@ -1,0 +1,31 @@
+
+
+
+/user/jenkins/fraud_demo_full_load_demetric
+
+
+########spoop import command to upload table from postgres to hdfs#####
+sqoop import --connect jdbc:postgresql://ec2-3-9-191-104.eu-west-2.compute.amazonaws.com:5432/testdb --username consultants --password WelcomeItc@2022 --table fraudtable --m 1 --target-dir /user/jenkins/fraud_demo_full_load_demetric
+
+
+######Create external table on top spoop imported flat file in HDFS##########
+DROP TABLE IF EXISTS fraud_project_demo.fraud_full_load_demo;
+CREATE EXTERNAL TABLE IF NOT EXISTS fraud_project_demo.fraud_full_load_demo (
+   step INT,
+   transaction_type STRING,
+   amount FLOAT,
+   nameOrig STRING,
+   oldbalanceOrg FLOAT,
+   newbalanceOrig FLOAT,
+   nameDest STRING,
+   oldbalanceDest FLOAT,
+   newbalanceDest FLOAT,
+   isFraud INT,
+   isFlaggedFraud INT,
+   row_id INT
+)
+ROW FORMAT DELIMITED
+FIELDS TERMINATED BY ','
+LINES TERMINATED BY '\n'
+STORED AS TEXTFILE
+LOCATION '/user/jenkins/fraud_demo_full_load_demetric';
